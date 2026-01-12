@@ -1,6 +1,11 @@
 import axios from 'axios'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api/denote';
+// Use environment variable for production backend URL
+// In development: uses Vite proxy (/api/denote -> localhost:5000)
+// In production: VITE_API_BASE_URL should be set to https://denote-igao.onrender.com
+const API_URL = import.meta.env.VITE_API_BASE_URL 
+  ? `${import.meta.env.VITE_API_BASE_URL}/api/denote`
+  : '/api/denote'
 
 const api = axios.create({
   baseURL: API_URL,
