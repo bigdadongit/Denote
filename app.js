@@ -6,15 +6,38 @@ const cors=require('cors');
 const app=express();
 const colors=require('colors');
 
-app.use(cors());
+// Load environment variables first
+dotenv.config({
+    path:'./config.env'
+});
+
+// CORS configuration - allows requests from frontend
+const allowedOrigins = [
+    'https://denote-nu.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174'
+];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.FRONTEND_URL === '*') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(morgan('dev'))
 
 app.use(express.json({}));
 app.use(express.urlencoded({extended:false}));
-
-dotenv.config({
-    path:'./config.env'
-});
 
 connectDB(); 
 
